@@ -8,7 +8,7 @@
 
 ## Console Output
 
-```console
+```text
 Please select an option from below
 1: Track package/s
 2: Truck details
@@ -64,9 +64,9 @@ Package #37 was delivered by truck 1 at 2023-10-26 08:47:00+00:00
 Package #38 was loaded into truck 2 at 2023-10-26 08:00:00+00:00 and is currently en route
 Package #39 was delivered by truck 1 at 2023-10-26 09:04:40+00:00
 Package #40 was delivered by truck 1 at 2023-10-26 09:47:20+00:00
+```
 
-
-```console
+```text
 *+*===============You are now accessing the delivery routing system==================*+*
 
 Please select an option from below
