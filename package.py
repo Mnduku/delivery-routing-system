@@ -21,8 +21,8 @@ class Package:
     def return_status(self, checktime):
         # Printing statement logic for the status of a package at a given time
         if self.delivery_time != None and (self.delivery_time) <=  (checktime):
-            return(f"Package #{self.pid} has was delivered by truck {self.which_truck} at {self.delivery_time}")
+            return(f"Package #{self.pid} was delivered by truck {self.which_truck} at {self.delivery_time}")
         elif self.load_time != None and checktime >= self.load_time:
-            return(f"Package #{self.pid} has was loaded into truck {self.which_truck} at {self.load_time} and is currently en route")
+            return(f"Package #{self.pid} was loaded into truck {self.which_truck} at {self.load_time} and is currently en route")
         else:
             return(f"Package #{self.pid} is still at the dock and waiting to be loaded")
