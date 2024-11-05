@@ -70,6 +70,25 @@ class HashTable:
             if key == k:
                 return v
         return None
+    
+    # Used to return package details as
+    # O(N) same as _get
+    def lookup(self, key):
+        index = self.hasher(key)
+        bucket = self.table[index]
+        for i, pair in enumerate(bucket):
+            k, v = pair
+            if key == k:
+                return(
+                    v.address,
+                    v.deadline,
+                    v.city,
+                    v.zip_code,
+                    v.weight,
+                    v.status
+                )
+            
+        return None
 
     # The delete method removes the key-value pair from the hashtable based on the provided key.
     # The average time complexity is O(1) since there is only one key per bucket
