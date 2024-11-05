@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
             try:
                 # Parse input time string and add to the base day so we can compare to dates in packages variables
-                time = Utils.format_time()
+                time = Utils.format_time(time_str)
                 option = input("\n1: View specific package\n2: View all packages?\n\n----> ")
 
                 if option == '2':
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                 for truck in truck_fleet:
                     truck.showdata()
                     total_distance += truck.distance_travelled
-                print(f"\nTotal distance: {total_distance:.2f}")
+                print(f"\nTotal distance: {total_distance:.2f}\n\n\n\n\n\n\n\n\n\n\n\n\n")
                 break
 
 
