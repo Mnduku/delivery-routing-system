@@ -5,7 +5,7 @@
 
 from utils import Utils
 import datetime as dat
-from datetime import datetime
+from datetime import datetime, timedelta
 from truck import Truck
 from datetime import timezone
 
@@ -18,19 +18,16 @@ if __name__ == "__main__":
     max_drivers = 2
     max_truck_load = 16
     truck_speed = 18
-    start_time =  datetime(2023, 10, 26, 8, 0, 0, tzinfo=timezone.utc)
-    start_location = '4001 South 700 East'
+    start_time = datetime(2023, 10, 26, 8, 0, 0, tzinfo=timezone.utc)
+    start_location = '4001 S 700 E'
     truck_fleet = []
 
-    # Console Ouput
-    print("*+*===============You are now acessing the delivery routing system=====================*+*")
-    print("Please select an option from below")
-    print("1: Track package")
-    print("2: Delivery details")
-    print("3: Exit")
+    # Hash table used to check what packages have and have not been delivered
+    packages = Utils.filltable(package_file, 0)
 
-    # Load package data from file
-    packages = Utils.filltable(package_file)
+    # List use solely for information holding since packages in hashtable will be removed and thus inacessible
+    packages_info = Utils.filltable(package_file, 1)
+
     print(packages.show())
 
     # Load distance + address data from file
@@ -42,20 +39,93 @@ if __name__ == "__main__":
     earliest_return = datetime(2023, 10, 26, 8, 0, 0, tzinfo=timezone.utc) + dat.timedelta(hours= 100)
     
     for i in range(0, total_trucks - (max_drivers - total_trucks + 2)):
-        truck_fleet.append(Truck(i, max_truck_load, truck_speed, None, [] , 0.0, start_time, start_time, start_location))
+        truck_fleet.append(Truck(i + 1, max_truck_load, truck_speed, 0, [] , 0.0, start_time, start_time, start_location))
 
         # Calculate routes and return distances
-        truck_fleet[i], distance = Utils.route(truck_fleet[i], packages, distance_map)
+        truck_fleet[i], distance, packages, packages_info = Utils.route(truck_fleet[i], packages, distance_map, packages_info)
         TOTAL_DISTANCE += distance
         truck_fleet[i], return_trip = Utils.calculate_return(truck_fleet[i], truck_fleet[i].current_address, start_location, distance_map)
         if return_trip <= earliest_return: earliest_return = return_trip
     
 
-    # Determine final truck route and return time
-    last_truck = (Truck(i, max_truck_load, truck_speed, None, [] , 0.0, earliest_return , earliest_return, start_location))
-    last_truck, distance = Utils.route(last_truck, packages, distance_map)
+    # Determine final truck route and return time after first truck return
+    last_truck = (Truck(total_trucks, max_truck_load, truck_speed, 0, [], 0.0, earliest_return , earliest_return, start_location))
+    truck_fleet.append(last_truck)
+    last_truck, distance, packages, packages_info = Utils.route(last_truck, packages, distance_map, packages_info)
     last_truck, return_trip = Utils.calculate_return(last_truck, last_truck.current_address, start_location, distance_map)
 
+    # Console Ouput
+    print("\n\n\n\n\n\n\n\n\n\n\n\n\n*+*===============You are now acessing the delivery routing system=====================*+*\n")
+    print("Please select an option from below")
+    print("1: Track package/s")
+    print("2: Delivery details")
+    print("3: Exit")
+
+    while True:
+        # User interface
+        input = (input("\n----> "))
+        if input == "1":
+            del(input)
+            time_str = input("\nPlease enter a time in the format (HH:MM:SS)\n\n----> ")
+
+            try:
+                # Parse input time string and add to the base day so we can compare to dates in packages variables
+                time = Utils.format_time()
+                option = input("\n1: View specific package\n2: View all packages?\n\n----> ")
+
+                if option == '2':
+                    # Iterates through entire delivered package table to get all of their statuses
+                    for package in packages_info:
+                        print(package.return_status(time))
+                    break
+                    
+                elif option == '1':
+                    # Finds and prints out the tracking info for the selected package
+                    which_package = input("\nEnter the id of the package you want to track\n\n----> ")
+                    int_input = int(which_package)
+                    print('\n')
+                    print(packages_info[int_input - 1].return_status(time))
+                    break
+                else:
+                    print("Invalid input")
+                    break
+
+            except ValueError:
+                    print("Invalid time input. Please enter a time with the format (HH:MM:SS).")
+                    break
+            
+        elif input == "2":   
+            time_str = input("\nPlease enter a time in the format (HH:MM:SS)\n\n----> ")
+
+            try:
+                # Parse input time string and add to the base day so we can compare to dates in packages variables
+                time = Utils.format_time()
+                print(f"\n\nTruck statistics at {time}")
+                total_distance = 0.0
+                for truck in [truck_fleet]:
+                truck.showdata()
+                    total_distance += truck.total_distance
+                print(f"Total distance: {total_distance}")
+
+            except ValueError:
+                    print("Invalid time input. Please enter a time with the format (HH:MM:SS).")
+                    break
+            
+        elif input == "2":
+            print("\n\nTruck statistics at")
+            total_distance = 0.0
+            for truck in [truck_fleet]:
+                truck.showdata()
+                total_distance += truck.total_distance
+            print(f"Total distance: {total_distance}")
+
+        elif input == "3":
+                    print("Terminating delivery service. Have a great day !")
+                    break
+        '''
+        else:
+            print("Invalid input. Please select a number between 1 and 3.")
+            break
 
 
 

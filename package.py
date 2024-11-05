@@ -1,5 +1,6 @@
 # Package class contains properties of the packages from the excel spreadsheet
-from datetime import datetime, date
+from datetime import datetime, date, timezone
+import pytz
 class Package:
     def __init__(self, pid, address, city, state, zipcode, deadline, weight, notes):
         self.status = None
@@ -12,14 +13,15 @@ class Package:
         self.weight = weight
         self.notes = notes
         self.departure_time = None
+        self.load_time = None
+        self.delivery_time = None
+        which_trick = None
 
-    def update(self, convert_datetime):
-        # Convert datetime to timedelta since midnight
-        convert_timedelta = datetime.combine(date.min, convert_datetime.time()) - datetime.min
-
-        if self.delivery_time is not None and self.delivery_time < convert_timedelta:
-            self.status = "Delivered"
-        elif self.departure_time is not None and self.departure_time > convert_timedelta:
-            self.status = "En route"
+    def return_status(self, checktime):
+        # Printing statement logic for the status of a package at a given time
+        if self.delivery_time != None and (self.delivery_time) <=  (checktime):
+            return(f"Package #{self.pid} has was delivered by truck {self.which_truck} at {self.delivery_time}")
+        elif self.load_time != None and checktime >= self.load_time:
+            return(f"Package #{self.pid} has was loaded into truck {self.which_truck} at {self.load_time} and is currently en route")
         else:
-            self.status = "At Hub"
+            return("ERROR")
