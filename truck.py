@@ -22,4 +22,3 @@ class Truck:
         print(f"Package count: {self.cargo}")
         print(f"Packages: {self.shipments}")
         print(f"Distance travelled: {self.distance_travelled:.2f}")
-        for f in self.required_packages: print(f.pid)
